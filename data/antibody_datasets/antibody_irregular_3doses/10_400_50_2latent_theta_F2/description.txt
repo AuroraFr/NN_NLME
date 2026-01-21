@@ -1,0 +1,2 @@
+this dataset is generated with time bases : base = np.array([0, 20, 45, 85, 130, 160, 200, 260, 320, 400])
+this dataset gives better estimation results because there are more points after 2nd injection to allow better estimating delta_Ab and delta_S
