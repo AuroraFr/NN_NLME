@@ -49,6 +49,8 @@ python antibody_multidose_data_scipy.py \
 ```
 The **S** and **Ab** trajectories are stored in the output file.
 
+The datasets used in the paper are in the folder data/
+
 ## Train on regular data + variance estimation (simulation loop)
 
 We run training and uncertainty quantification on multiple simulated datasets. For each dataset replicate:
