@@ -1,6 +1,7 @@
 from scipy.integrate import odeint
 import numpy as np
 from pathlib import Path
+import argparse
 
 np.random.seed(42)
 
@@ -164,24 +165,56 @@ def generate_data_irregular(n_sample, T, n_points):
     return np.array(datas), np.array(datas_nonoise), np.array(times_list)
 
         
-irregular = False
 
-for i in range(100):
 
-    subjects = 50
-    duration = 400
-    measurements = 15
-    if irregular:
-        dataset, dataset_nonoise, timelist = generate_data_irregular(subjects, duration, measurements)
-        dataset_folder = 'antibody_datasets/scipy_antibody_irregular_3dose/10_'+str(duration)+'_'+str(subjects)+'_2latent_theta_F2_2/'
-        Path(dataset_folder).mkdir(parents=True, exist_ok=True)
-        np.save(dataset_folder+'dataset_'+str(i), dataset)
-        np.save(dataset_folder+'dataset_nonoise_'+str(i), dataset_nonoise)
-        np.save(dataset_folder+'dataset_timepoints_'+str(i), timelist)
-    else:
-        dataset, dataset_nonoise = generate_data(subjects, duration, measurements)
-        dataset_folder = 'antibody_datasets/scipy_antibody_3dose_2/'+str(measurements)+'_'+str(duration)+'_'+str(subjects)+'_2latent_theta_F2/'
-        Path(dataset_folder).mkdir(parents=True, exist_ok=True)
-        np.save(dataset_folder+'dataset_'+str(i), dataset)
-        np.save(dataset_folder+'dataset_nonoise_'+str(i), dataset_nonoise)
+def main():
+    # 1. Setup Argument Parser
+    parser = argparse.ArgumentParser(description="Generate antibody 3dose data.")
+    
+    parser.add_argument("--irregular", type=lambda x: (str(x).lower() == 'true'), default=False, 
+                        help="Generate irregular data if True")
+    parser.add_argument("--out", type=str, default="test_antibody_datasets/", 
+                        help="Base output directory")
+    parser.add_argument("--seed", type=int, default=42, 
+                        help="Random seed for reproducibility")
+    parser.add_argument("--measurements", type=int, default=15, 
+                        help="Number of measurements")
+    parser.add_argument("--duration", type=int, default=400, 
+                        help="Duration of the study")
+    parser.add_argument("--subjects", type=int, default=50, 
+                        help="Number of subjects")
+
+    args = parser.parse_args()
+
+    # 2. Set the seed for reproducibility
+    np.random.seed(args.seed)
+
+    # 3. Data Generation Loop
+    for i in range(10):
+        if args.irregular:
+            # Note: Ensure generate_data_irregular is imported/defined
+            dataset, dataset_nonoise, timelist = generate_data_irregular(args.subjects, args.duration, args.measurements)
+            
+            sub_folder = f"antibody_irregular_3dose/{args.measurements}_{args.duration}_{args.subjects}_2latent_theta_F2/"
+            dataset_folder = Path(args.out) / sub_folder
+            
+            dataset_folder.mkdir(parents=True, exist_ok=True)
+            np.save(dataset_folder / f"dataset_{i}", dataset)
+            np.save(dataset_folder / f"dataset_nonoise_{i}", dataset_nonoise)
+            np.save(dataset_folder / f"dataset_timepoints_{i}", timelist)
+        else:
+            # Note: Ensure generate_data is imported/defined
+            dataset, dataset_nonoise = generate_data(args.subjects, args.duration, args.measurements)
+            
+            sub_folder = f"antibody_3dose/{args.measurements}_{args.duration}_{args.subjects}_2latent_theta_F2/"
+            dataset_folder = Path(args.out) / sub_folder
+            
+            dataset_folder.mkdir(parents=True, exist_ok=True)
+            np.save(dataset_folder / f"dataset_{i}", dataset)
+            np.save(dataset_folder / f"dataset_nonoise_{i}", dataset_nonoise)
+
+    print(f"Successfully generated 100 datasets in: {dataset_folder}")
+
+if __name__ == "__main__":
+    main()
 
