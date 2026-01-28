@@ -49,6 +49,8 @@ python antibody_multidose_data_scipy.py \
 ```
 The **S** and **Ab** trajectories are stored in the output file.
 
+For the irregular data, the timepoints are saved in a separate file for each dataset.
+
 The datasets used in the paper are in the folder data/
 
 ## Train on regular data + variance estimation (simulation loop)
