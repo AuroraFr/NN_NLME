@@ -190,7 +190,7 @@ def main():
     np.random.seed(args.seed)
 
     # 3. Data Generation Loop
-    for i in range(10):
+    for i in range(100):
         if args.irregular:
             # Note: Ensure generate_data_irregular is imported/defined
             dataset, dataset_nonoise, timelist = generate_data_irregular(args.subjects, args.duration, args.measurements)

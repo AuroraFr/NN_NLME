@@ -85,7 +85,7 @@ def make_step(model, state, opt_state, y, key_i, n_z, optim):
 
     return state, model, opt_state, key_i, grad_norm, ratio
 
-def main(i, seed=42, steps=50000, model_folder='./EXPs/exp_antibody_3dose_2latent/10p_400d_50s_2latent_theta_F2_deltaAb_noise_check/', data_folder='antibody_datasets/scipy_antibody_3dose_15_400_50/'):
+def main(i, seed=42, steps=50000, model_folder='trained_models/antibody_regular_3dose_2latents/', data_folder='data/antibody_datasets/antibody_3dose_15_400_50/'):
 
     #Training
     learning_rate = 0.01
@@ -108,13 +108,13 @@ def main(i, seed=42, steps=50000, model_folder='./EXPs/exp_antibody_3dose_2laten
     test_ts_list = []
  
     # train_data = np.load('antibody_datasets/scipy_antibody_3dose/15_400_50_2latent_theta_F2/dataset_'+str(i)+'.npy')[:,:,1]
-    train_data = np.load(data_folder+'dataset'+str(i)+'.npy')
+    train_data = np.load(data_folder+'dataset_'+str(i)+'.npy')
     time_length = train_data.shape[1]
     print("regular sampling", time_length, train_data.shape)
     train_data_timepoints = jnp.linspace(0, T, time_length)
     
     # test_data = np.load('antibody_datasets/scipy_antibody_3dose/15_400_50_2latent_theta_F2/dataset_0.npy')[:,:,1]
-    test_data = np.load(data_folder+'dataset0.npy')
+    test_data = np.load(data_folder+'dataset_0.npy')
     test_data_timepoints = jnp.linspace(0, T, time_length)
     batch_size = train_data.shape[0]
 
@@ -156,7 +156,8 @@ def main(i, seed=42, steps=50000, model_folder='./EXPs/exp_antibody_3dose_2laten
     init_params = jnp.array([init_theta, init_F2, init_F3, init_theta_logstd, init_F2_logstd, init_deltaS, init_deltaAB, init_noise_logvar])
 
     model, state = eqx.nn.make_with_state(Antibody)(latent_shape, init_params, train_key, n_z=n_z, T=400, kernel_size=3,
-                                                    timepoints=time_length, time_scale=1, conv=True, rnn=False, irregular=irregular, input_channel=1, out_channel=1, hidden_dim=4)
+                                                    timepoints=time_length, time_scale=1, conv=True, rnn=False, 
+                                                    irregular=irregular, input_channel=1, out_channel=1, hidden_dim=4)
 
     optim = optax.inject_hyperparams(optax.adam)(learning_rate=learning_rate)
 
@@ -206,8 +207,8 @@ if __name__ == "__main__":
     import sys
     GPU = int(sys.argv[1])
     if GPU == 0:
-        for i in range(35, 50):
+        for i in range(1, 50):
             main(i)
     elif GPU == 1:
-        for i in range(78, 100):
+        for i in range(50, 100):
             main(i)
